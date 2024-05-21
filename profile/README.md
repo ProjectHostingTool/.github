@@ -29,7 +29,7 @@ Welcome to **Project Hosting Tool(PHT)!** PHT is a powerful tool designed to sim
 
 ### Installation 🛠️
 
-    bash -c "$(curl -sSfL https://raw.githubusercontent.com/the-abra/PHT/main/setup/setup.sh)"
+    bash -c "$(curl -sSfL https://raw.githubusercontent.com/ProjectHostingTool/PHT/main/setup/setup.sh)"
 
 ### Usage 💻
 
