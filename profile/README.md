@@ -1,59 +1,127 @@
-<img width="76px" align="right" src="https://github.com/ProjectHostingTool/.github/assets/83769871/a7f9bf01-1581-490c-ae7a-4345403d2330" alt="ICON">
+#!/bin/bash
 
-# Project Hosting Tool (PHT) 🛠️🚀
+if ! [ "$UID" -eq 0 ]; then
+    echo "You are not running as root. Please run this script with sudo or as root."
+    exit 1
+fi
 
-Welcome to **Project Hosting Tool(PHT)!** PHT is a powerful tool designed to simplify the process of automatically installing, managing, and running applications within Docker containers.
+if ! ping -c 1 github.com > /dev/null; then
+    echo -e "You must have an internet connection!" && exit 1
+fi
 
-## Features ✨
 
-- **Deployment**: Deploy your projects swiftly and efficiently.
-- **Scalability**: Seamlessly scale your applications as needed.
-- **Portability**: Run your applications anywhere Docker is supported.
-- **Management**: Manage all your installed modules from a single interface.
-- **Automated Installation**: Automatically installs applications(modules) within Docker containers.
+# Functions
+errorlog() {
+    echo -e "${RESEST}[${RED}${BLINK}ERROR${STOPBLINK}${RESEST}] $1" && sleep 0.2
+}
+warnlog() {
+    echo -e "${RESET}[${YELLOW}WARN${RESET}] $1" && sleep 0.2
+}
+successlog() {
+    echo -e "${RESET}[${GREEN}SUCCESS${RESET}] $1" && sleep 0.2
+}
+infolog() {
+    echo -e "${RESET}[${CYAN}INFO${RESET}] $1" && sleep 0.2
+}
 
-# Getting Started 🚀
+# Function to determine the package manager and install a package
+install_package() {
+    local package=$1
+    if command -v apt >/dev/null; then
+        apt install -yq "$package" &> /dev/null
+    elif command -v pacman >/dev/null; then
+        pacman -S --noconfirm "$package" &> /dev/null
+    elif command -v yum >/dev/null; then
+        yum install -y "$package" &> /dev/null
+    elif command -v dnf >/dev/null; then
+        dnf install -y "$package" &> /dev/null
+    else
+        errorlog "No suitable package manager found. Please install $package manually."
+        exit 1
+    fi
+}
 
-### Prerequisites 📋
+# Update package lists
+apt update &> /dev/null
 
-- Git
-- Docker
-- Computer 
-- Root permission
-- Network Connection
-- UNIX Like file system
+! [[ -f /usr/bin/curl ]] && apt install curl -yq &> /dev/null
 
-### Installation 🛠️
+curl https://raw.githubusercontent.com/ProjectHostingTool/PHT/main/src/colors.sh -s -o /tmp/colors.sh
+if [[ $(cat "/tmp/colors.sh" | head -n1) =~ "# Define color variables" ]]; then
+    source "/tmp/colors.sh"
+else
+    errorlog "Colors not imported, you have to check github.com connection."
+fi
 
-    bash -c "$(curl -sSfL https://raw.githubusercontent.com/ProjectHostingTool/PHT/main/setup/setup.sh)"
+curl https://raw.githubusercontent.com/ProjectHostingTool/PHT/main/src/banners.sh -s -o /tmp/banners.sh
+if [[ $(cat "/tmp/banners.sh" | head -n1) =~ "# PHT banner" ]]; then
+    source "/tmp/banners.sh"
+else
+    errorlog "Banners not imported, you have to check github.com connection."
+fi
 
-### Usage 💻
 
-    pht help commands
+banner1 2> /dev/null
 
-### Template Project Cloning 🗿
+# Check and install Docker
+if ! command -v docker >/dev/null; then
+    infolog "Installing docker.io"
+    install_package docker.io
+    if ! command -v docker >/dev/null; then
+        errorlog "Docker installation failed, try manually."
+        exit 1
+    else
+        successlog "Docker installed."
+    fi
+else
+    infolog "Docker found."
+fi
 
-    pht get ProjectHostingTool/template
+# Check and install Git
+if ! command -v git >/dev/null; then
+    infolog "Installing git"
+    install_package git
+    if ! command -v git >/dev/null; then
+        errorlog "Git installation failed, try manually."
+        exit 1
+    else
+        successlog "Git installed."
+    fi
+else
+    infolog "Git found."
+fi
 
-### module.pht example 🏭
 
-    os=<set os>
-    giturl=<set git url>
-    exec=<exec file, its may bash script>
-    vpath=<set virtual path to install>
+# Move /opt/PHT to /opt/PHT.old if it exists
+if [ -d /opt/PHT ]; then
+    [[ -d /opt/PHT.old ]] && rm -r /opt/PHT.old
+    mv /opt/PHT /opt/PHT.old
+    infolog "Moving /opt/PHT to /opt/PHT.old"
+fi
 
-### Supported Oses 🖥️
+cd /opt/
+git clone https://github.com/ProjectHostingTool/PHT.git > /dev/null 2>&1
 
-<img width="66px" src="https://github.com/ProjectHostingTool/PHT/assets/83769871/53eec4ac-2e9c-41a1-9210-d009a5553c56" alt="ICON">
-<img width="76px" src="https://github.com/ProjectHostingTool/PHT/assets/83769871/e15238d7-4a0e-47ea-a4d5-a0016000722b" alt="ICON">
-<img width="86px" src="https://github.com/ProjectHostingTool/PHT/assets/83769871/3410f28e-ee11-483c-88a5-d332064ffe0d" alt="ICON">
+# Check if the clone was successful
+if [ ! -d /opt/PHT ]; then
+    errorlog "System cloning process went wrong. \ncode: git clone https://github.com/ProjectHostingTool/PHT.git"
+    exit 1
+fi
 
-### License 📄
+! [[ $(docker network ls | grep phtnetwork) =~ "phtnetwork" ]] && (docker network create --subnet=172.20.0.0/16 --gateway=172.20.0.1 phtnetwork 1>/dev/null || (errorlog "Docker network setup fail!" && exit 1))
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+xhost +local:docker
 
-### Contact 📬
+ln -sf /opt/PHT/main.sh /bin/pht
+mkdir /opt/PHT/core/modules/confs &> /dev/null
+chmod +x /bin/pht
 
-If you have any questions or suggestions, feel free to open an issue or contact us at aegean.sword1@gmail.com
+[[ -f setup.sh ]] && rm setup.sh
+rm /tmp/colors.sh
 
-Thank you for using **Project Hosting Tool (PHT)!** We hope it makes your application management easier and more efficient. Happy hosting! 🎉
+cd PHT/
+git rm --cached core/modules/staticIp.list
+git rm --cached core/logs/updater.log
+
+successlog "System files installed."
+exit 0
