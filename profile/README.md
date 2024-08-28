@@ -17,11 +17,14 @@ Welcome to **Project Hosting Tool(PHT)!** PHT is a powerful tool designed to sim
 ### Prerequisites 📋
 
 - Git
+- X11
+- less
+- Bash
 - Docker
-- Computer 
+- Computer (optional)
 - Core Utils
 - Root permission
-- Network Connection
+- Network Connection (Optional)
 - UNIX Like file system
 
 ### Installation 🛠️
@@ -39,9 +42,54 @@ Welcome to **Project Hosting Tool(PHT)!** PHT is a powerful tool designed to sim
 ### module.pht example 🏭
 
     os=<set os>
-    giturl=<set git url>
-    exec=<exec file, its may bash script>
-    vpath=<set virtual path to install>
+    giturl=<set project git url>
+    exec=<exec file name, its may bash script>
+    vpath=<set path for access codes in container>
+
+### Videos
+
+<details>
+<summary>Install PHT</summary>
+<br>
+    
+![INSTALL](https://github.com/ProjectHostingTool/PHT/assets/83769871/a3594b05-e892-48ac-8634-ddc903eb8ed9)
+
+</details>
+
+<details>
+<summary>How to get module</summary>
+<br>
+    
+![GET](https://github.com/ProjectHostingTool/PHT/assets/83769871/df9b2de4-f22a-4691-81d4-5bf48fd5bedd)
+
+</details>
+
+<details>
+<summary>LIST Modules</summary>
+<br>
+    
+![LIST](https://github.com/ProjectHostingTool/PHT/assets/83769871/b6fbc793-b7a1-4339-aedf-c310d0b9d070)
+
+</details>
+
+<details>
+<summary>Get HELP</summary>
+<br>
+    
+![HELP](https://github.com/ProjectHostingTool/PHT/assets/83769871/43e9d9a4-2e6a-42a0-929b-95614c08a25b)
+
+</details>
+
+
+
+
+### Preferred And Tested on ✅
+<img width="66px" src="https://github.com/ProjectHostingTool/PHT/assets/83769871/53eec4ac-2e9c-41a1-9210-d009a5553c56" alt="DEBIAN">
+<img width="76px" src="https://github.com/ProjectHostingTool/PHT/assets/83769871/b29bacf0-0c1d-40f1-8383-d18795c1f5fc" alt="UBUNTU">
+<img width="84px" src="https://github.com/ProjectHostingTool/PHT/assets/83769871/021702d2-29a2-49ab-9093-8399bc96e598" alt="Raspberry Pi">
+<img width="76px" src="https://github.com/ProjectHostingTool/PHT/assets/83769871/44d2c1be-0bdd-4170-96be-dd4abfff8ade" alt="MINT">
+
+
 
 ### Supported Oses 🖥️
 
@@ -62,6 +110,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ### Contact 📬
 
-If you have any questions or suggestions, feel free to open an issue or contact us at aegean.sword1@gmail.com
+If you have any questions or suggestions, feel free to open an issue or contact us at abra@plexusteam.org
 
 Thank you for using **Project Hosting Tool (PHT)!** We hope it makes your application management easier and more efficient. Happy hosting! 🎉
